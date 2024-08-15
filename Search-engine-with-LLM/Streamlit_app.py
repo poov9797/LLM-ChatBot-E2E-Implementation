@@ -64,7 +64,7 @@ CONTEXT:
 
 def llm(prompt):
     response = client.chat.completions.create(
-        model='phi3',
+        model='gemma2:2b',
         messages=[{"role": "user", "content": prompt}]
     )
     
