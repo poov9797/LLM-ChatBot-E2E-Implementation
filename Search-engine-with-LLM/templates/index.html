@@ -1,70 +1,50 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG Function Invocation</title>
+    <title>QA forum for answeing question related to ZoomCamp</title>
     <style>
-        #loading {
+        .loading {
             display: none;
-            font-weight: bold;
-            color: blue;
         }
-        #completed {
+        .result {
             display: none;
-            font-weight: bold;
-            color: green;
         }
     </style>
 </head>
 <body>
-    <h1>RAG Function Invocation</h1>
-    <form id="question-form">
-        <label for="query">Enter your question:</label>
-        <input type="text" id="query" name="query" required>
-        <button type="submit">Ask</button>
+    <h1>Flask App</h1>
+    <form id="form">
+        <input type="text" id="input_data" name="input_data" placeholder="Enter something">
+        <button type="button" onclick="submitForm()">Ask</button>
     </form>
-
-    <!-- Loading message -->
-    <div id="loading">Processing... Please wait.</div>
-
-    <!-- Completed message -->
-    <div id="completed">Completed!</div>
-
-    <!-- Display the answer -->
-    <div id="response" style="margin-top: 20px;"></div>
+    <div id="loading" class="loading">Loading...</div>
+    <div id="result" class="result"></div>
 
     <script>
-        const form = document.getElementById('question-form');
-        const loadingElement = document.getElementById('loading');
-        const completedElement = document.getElementById('completed');
-        const responseElement = document.getElementById('response');
+        function submitForm() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const query = document.getElementById('query').value;
+            const formData = new FormData(document.getElementById('form'));
 
-            // Show the loading message
-            loadingElement.style.display = 'block';
-            completedElement.style.display = 'none';
-            responseElement.innerText = '';
-
-            const response = await fetch('/ask', {
+            fetch('/process', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ query })
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                const resultDiv = document.getElementById('result');
+                resultDiv.textContent = data.result;
+                resultDiv.style.display = 'block';
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                console.error('Error:', error);
             });
-
-            const result = await response.json();
-
-            // Hide the loading message and show the completed message and response
-            loadingElement.style.display = 'none';
-            completedElement.style.display = 'block';
-            responseElement.innerText = result.response;
-        });
+        }
     </script>
 </body>
 </html>
