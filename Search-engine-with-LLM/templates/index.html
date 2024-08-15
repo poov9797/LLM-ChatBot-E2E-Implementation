@@ -1,0 +1,70 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Function Invocation</title>
+    <style>
+        #loading {
+            display: none;
+            font-weight: bold;
+            color: blue;
+        }
+        #completed {
+            display: none;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>RAG Function Invocation</h1>
+    <form id="question-form">
+        <label for="query">Enter your question:</label>
+        <input type="text" id="query" name="query" required>
+        <button type="submit">Ask</button>
+    </form>
+
+    <!-- Loading message -->
+    <div id="loading">Processing... Please wait.</div>
+
+    <!-- Completed message -->
+    <div id="completed">Completed!</div>
+
+    <!-- Display the answer -->
+    <div id="response" style="margin-top: 20px;"></div>
+
+    <script>
+        const form = document.getElementById('question-form');
+        const loadingElement = document.getElementById('loading');
+        const completedElement = document.getElementById('completed');
+        const responseElement = document.getElementById('response');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+
+            // Show the loading message
+            loadingElement.style.display = 'block';
+            completedElement.style.display = 'none';
+            responseElement.innerText = '';
+
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ query })
+            });
+
+            const result = await response.json();
+
+            // Hide the loading message and show the completed message and response
+            loadingElement.style.display = 'none';
+            completedElement.style.display = 'block';
+            responseElement.innerText = result.response;
+        });
+    </script>
+</body>
+</html>
