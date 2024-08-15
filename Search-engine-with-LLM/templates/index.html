@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QA forum for answeing question related to ZoomCamp</title>
+    <title>Flask App</title>
     <style>
         .loading {
             display: none;
@@ -11,12 +11,25 @@
         .result {
             display: none;
         }
+        #input_data {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 40px;
+            overflow: hidden;
+            resize: none;
+        }
+        #form {
+            max-width: 600px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
-    <h1>Flask App</h1>
+    <h1>RAG with Elasticsearch and Gemma2(LLM)</h1>
+    <h2>Q/A system for Datatalks.club Courses</h2>
     <form id="form">
-        <input type="text" id="input_data" name="input_data" placeholder="Enter something">
+        <textarea id="input_data" name="input_data" placeholder="Enter something" oninput="autoExpand(this)"></textarea>
+        <br>
         <button type="button" onclick="submitForm()">Ask</button>
     </form>
     <div id="loading" class="loading">Loading...</div>
@@ -44,6 +57,11 @@
                 document.getElementById('loading').style.display = 'none';
                 console.error('Error:', error);
             });
+        }
+
+        function autoExpand(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
         }
     </script>
 </body>
