@@ -92,6 +92,7 @@ CONTEXT:
         context = context + f"section: {doc['section']}\nquestion: {doc['question']}\nanswer: {doc['text']}\n\n"
     
     prompt = prompt_template.format(question=query, context=context).strip()
+
     return prompt
 
 def llm(prompt):
@@ -104,15 +105,16 @@ def llm(prompt):
 
 
 def rag(query):
-    search_results = elastic_search(query)
-    prompt = build_prompt(query, search_results)
+    # search_results = elastic_search(query)
+    # prompt = build_prompt(query, search_results)
+    prompt="You are a chatbot, who answers the question asked?" + query
     answer = llm(prompt)
 
     return answer
 
 
 def main():
-    st.title("RAG Function Invocation")
+    st.title("Poov's Simple ChatBot")
 
     user_input = st.text_input("Enter your input:")
 
