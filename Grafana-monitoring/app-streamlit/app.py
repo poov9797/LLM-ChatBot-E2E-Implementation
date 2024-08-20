@@ -5,6 +5,27 @@ import uuid
 from assistant import get_answer
 from db import save_conversation, save_feedback, get_recent_conversations, get_feedback_stats
 
+#####################
+# app.py
+import subprocess
+
+def run_prep_script():
+    try:
+        result = subprocess.run(
+            ['python', 'prep.py'],
+            check=True,  # Raises CalledProcessError if the command exits with a non-zero status
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        print("prep.py output:", result.stdout.decode())
+    except subprocess.CalledProcessError as e:
+        print("Error occurred while running prep.py:", e.stderr.decode())
+
+if __name__ == "__main__":
+    run_prep_script()
+    # Continue with the rest of app.py
+
+#####################
 
 def print_log(message):
     print(message, flush=True)
