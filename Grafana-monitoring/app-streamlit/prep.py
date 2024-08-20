@@ -47,6 +47,7 @@ def load_model():
 
 def setup_elasticsearch():
     print("Setting up Elasticsearch...")
+    print("URl",ELASTIC_URL)
     es_client = Elasticsearch(ELASTIC_URL)
 
     index_settings = {

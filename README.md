@@ -7,15 +7,9 @@ cd Grafana-monitoring/app-streamlit
 
 Step 2:
 ```
-docker-compose up --build
+export $(grep -v '^#' .env | xargs)
 ```
-
 Step 3:
 ```
-docker-compose exec ollama ollama pull gemma2:2b
+make
 ```
-(or)
-```
-docker-compose exec ollama ollama pull "any model from ollama repository"
-```
-

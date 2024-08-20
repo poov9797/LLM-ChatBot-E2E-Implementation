@@ -1,8 +1,16 @@
 # Makefile
 
-.PHONY: all setup build pull prep
+# Export environment variables from .env
 
-all: setup  build pull prep
+.PHONY: all setup build pull prep install-requirements
+
+all: setup build pull prep
+
+setup: install-requirements
+	# Additional setup commands if needed
+
+install-requirements:
+	pip install -r requirements.txt
 
 build: setup
 	docker-compose up --build -d
