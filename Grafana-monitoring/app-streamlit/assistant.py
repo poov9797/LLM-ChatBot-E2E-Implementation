@@ -135,7 +135,7 @@ def evaluate_relevance(question, answer):
     """.strip()
 
     prompt = prompt_template.format(question=question, answer=answer)
-    evaluation, tokens, _ = llm(prompt, 'ollama/gemma2:2b')
+    evaluation, tokens, _ = llm(prompt, 'ollama/phi3')
     
     try:
         json_eval = json.loads(evaluation)

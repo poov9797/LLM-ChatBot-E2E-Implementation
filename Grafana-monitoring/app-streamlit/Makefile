@@ -8,7 +8,7 @@ build: setup
 	docker-compose up --build -d
 
 pull: build
-	docker-compose exec ollama ollama pull gemma2:2b
+	docker-compose exec ollama ollama pull phi3
 
 prep: pull
 	docker-compose exec streamlit python prep.py
