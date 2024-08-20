@@ -101,7 +101,7 @@ def rag(input_data):
     # search_results = elastic_search(query)
     # prompt = build_prompt(query, search_results)
 
-    prompt="You are a chatbot, who answers the question asked?" + query
+    prompt="You are a chatbot, who answers the question asked?" + input_data
     answer = llm(prompt)
     # Simulate a delay
     # time.sleep(2)
