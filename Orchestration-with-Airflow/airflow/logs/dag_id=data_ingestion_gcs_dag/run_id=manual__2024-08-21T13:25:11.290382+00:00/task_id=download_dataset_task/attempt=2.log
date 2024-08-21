@@ -1,0 +1,23 @@
+[2024-08-21T14:07:58.738+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2024-08-21T14:07:58.745+0000] {taskinstance.py:2603} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: data_ingestion_gcs_dag.download_dataset_task manual__2024-08-21T13:25:11.290382+00:00 [queued]>
+[2024-08-21T14:07:58.748+0000] {taskinstance.py:2603} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: data_ingestion_gcs_dag.download_dataset_task manual__2024-08-21T13:25:11.290382+00:00 [queued]>
+[2024-08-21T14:07:58.748+0000] {taskinstance.py:2856} INFO - Starting attempt 2 of 3
+[2024-08-21T14:07:58.753+0000] {taskinstance.py:2879} INFO - Executing <Task(BashOperator): download_dataset_task> on 2024-08-21 13:25:11.290382+00:00
+[2024-08-21T14:07:58.756+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=184) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2024-08-21T14:07:58.757+0000] {standard_task_runner.py:72} INFO - Started process 186 to run task
+[2024-08-21T14:07:58.757+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'data_ingestion_gcs_dag', 'download_dataset_task', 'manual__2024-08-21T13:25:11.290382+00:00', '--job-id', '18', '--raw', '--subdir', 'DAGS_FOLDER/data_ingestion_gcs_dag.py', '--cfg-path', '/tmp/tmppefi1ht2']
+[2024-08-21T14:07:58.759+0000] {standard_task_runner.py:105} INFO - Job 18: Subtask download_dataset_task
+[2024-08-21T14:07:58.779+0000] {task_command.py:467} INFO - Running <TaskInstance: data_ingestion_gcs_dag.download_dataset_task manual__2024-08-21T13:25:11.290382+00:00 [running]> on host 39b086f3e08f
+[2024-08-21T14:07:58.815+0000] {taskinstance.py:3122} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='data_ingestion_gcs_dag' AIRFLOW_CTX_TASK_ID='download_dataset_task' AIRFLOW_CTX_EXECUTION_DATE='2024-08-21T13:25:11.290382+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-08-21T13:25:11.290382+00:00'
+[2024-08-21T14:07:58.816+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2024-08-21T14:07:58.822+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2024-08-21T14:07:58.823+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'curl -sSL https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz > /opt/***/yellow_tripdata_2021-01.csv']
+[2024-08-21T14:07:58.828+0000] {subprocess.py:86} INFO - Output:
+[2024-08-21T14:08:10.357+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2024-08-21T14:08:10.400+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2024-08-21T14:08:10.401+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=data_ingestion_gcs_dag, task_id=download_dataset_task, run_id=manual__2024-08-21T13:25:11.290382+00:00, execution_date=20240821T132511, start_date=20240821T140758, end_date=20240821T140810
+[2024-08-21T14:08:10.425+0000] {local_task_job_runner.py:261} INFO - Task exited with return code 0
+[2024-08-21T14:08:10.435+0000] {taskinstance.py:3891} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2024-08-21T14:08:10.436+0000] {local_task_job_runner.py:240} INFO - ::endgroup::
