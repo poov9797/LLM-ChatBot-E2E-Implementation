@@ -2,14 +2,16 @@
 
 Step 1:
 ```
+bash setup.sh
+```
+To close app
+
+Step 1:
+```
 cd Grafana-monitoring/app-streamlit
 ```
 
 Step 2:
 ```
-export $(grep -v '^#' .env | xargs)
-```
-Step 3:
-```
-make
+docker-compose down
 ```
