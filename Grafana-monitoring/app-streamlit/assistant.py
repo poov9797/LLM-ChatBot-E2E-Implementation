@@ -14,8 +14,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your-api-key-here")
 
 
 es_client = Elasticsearch(ELASTIC_URL)
-ollama_client = OpenAI(base_url=OLLAMA_URL, api_key="ollama")
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+# ollama_client = OpenAI(base_url=OLLAMA_URL, api_key="ollama")
+# openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 model = SentenceTransformer("multi-qa-MiniLM-L6-cos-v1")
 
@@ -60,39 +60,61 @@ def elastic_search_knn(field, vector, course, index_name="course-questions"):
     return [hit["_source"] for hit in es_results["hits"]["hits"]]
 
 
-def build_prompt(query, search_results):
-    prompt_template = """
-You're a course teaching assistant. Answer the QUESTION based on the CONTEXT from the FAQ database.
-Use only the facts from the CONTEXT when answering the QUESTION.
+def build_prompt(query):
+    prompt_template = """Analyze the following job description and determine whether it shows signs of potential human trafficking or labor exploitation. 
+    Consider factors such as vague responsibilities, excessive control over workers, unrealistic promises, poor working conditions, lack of legal protections, 
+    recruitment from vulnerable populations, or requirements to surrender personal documents. 
+    Respond in JSON format with fields ‘RiskLevel’ (LOW, MEDIUM, HIGH), ‘Indicators’ (a list of red flags), and ‘Explanation’ (a brief summary of your reasoning).
 
-QUESTION: {question}
+Job Description:
+{query}""".strip()
 
-CONTEXT: 
-{context}
-""".strip()
+    # context = "\n\n".join(
+    #     [
+    #         f"section: {doc['section']}\nquestion: {doc['question']}\nanswer: {doc['text']}"
+    #         for doc in search_results
+    #     ]
+    # )
+    return prompt_template.format(query =query).strip()
 
-    context = "\n\n".join(
-        [
-            f"section: {doc['section']}\nquestion: {doc['question']}\nanswer: {doc['text']}"
-            for doc in search_results
-        ]
-    )
-    return prompt_template.format(question=query, context=context).strip()
+import httpx
 
+def query_ollama(prompt, model):
+    url = f"{OLLAMA_URL.rstrip('/')}/chat/completions"
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    headers = {"Content-Type": "application/json"}
+    response = httpx.post(url, json=payload, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
 def llm(prompt, model_choice):
     start_time = time.time()
+
     if model_choice.startswith('ollama/'):
-        response = ollama_client.chat.completions.create(
-            model=model_choice.split('/')[-1],
-            messages=[{"role": "user", "content": prompt}]
-        )
-        answer = response.choices[0].message.content
-        tokens = {
-            'prompt_tokens': response.usage.prompt_tokens,
-            'completion_tokens': response.usage.completion_tokens,
-            'total_tokens': response.usage.total_tokens
-        }
+        model_name = model_choice.split('/')[-1]
+        response = query_ollama(prompt, model_name)
+        answer = response["choices"][0]["message"]["content"]
+        tokens = response.get("usage", {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0
+        })
+
+
+    # if model_choice.startswith('ollama/'):
+    #     response = ollama_client.chat.completions.create(
+    #         model=model_choice.split('/')[-1],
+    #         messages=[{"role": "user", "content": prompt}]
+    #     )
+    #     answer = response.choices[0].message.content
+    #     tokens = {
+    #         'prompt_tokens': response.usage.prompt_tokens,
+    #         'completion_tokens': response.usage.completion_tokens,
+    #         'total_tokens': response.usage.total_tokens
+    #     }
     # elif model_choice.startswith('openai/'):
     #     response = openai_client.chat.completions.create(
     #         model=model_choice.split('/')[-1],
@@ -155,31 +177,31 @@ def calculate_openai_cost(model_choice, tokens):
     return openai_cost
 
 
-def get_answer(query, course, model_choice, search_type):
-    if search_type == 'Vector':
-        vector = model.encode(query)
-        search_results = elastic_search_knn('question_text_vector', vector, course)
-    else:
-        search_results = elastic_search_text(query, course)
-
-    prompt = build_prompt(query, search_results)
+def get_answer(query, model_choice):
+    # if search_type == 'Vector':
+    #     vector = model.encode(query)
+    #     search_results = elastic_search_knn('question_text_vector', vector, course)
+    # else:
+    #     search_results = elastic_search_text(query, course)
+    prompt = build_prompt(query)
+    # prompt = build_prompt(query, search_results)
     answer, tokens, response_time = llm(prompt, model_choice)
     
-    relevance, explanation, eval_tokens = evaluate_relevance(query, answer)
+    # relevance, explanation, eval_tokens = evaluate_relevance(query, answer)
 
-    openai_cost = calculate_openai_cost(model_choice, tokens)
+    # openai_cost = calculate_openai_cost(model_choice, tokens)
  
     return {
         'answer': answer,
         'response_time': response_time,
-        'relevance': relevance,
-        'relevance_explanation': explanation,
-        'model_used': model_choice,
-        'prompt_tokens': tokens['prompt_tokens'],
-        'completion_tokens': tokens['completion_tokens'],
+        # 'relevance': relevance,
+        # 'relevance_explanation': explanation,
+        # 'model_used': model_choice,
+        # 'prompt_tokens': tokens['prompt_tokens'],
+        # 'completion_tokens': tokens['completion_tokens'],
         'total_tokens': tokens['total_tokens'],
-        'eval_prompt_tokens': eval_tokens['prompt_tokens'],
-        'eval_completion_tokens': eval_tokens['completion_tokens'],
-        'eval_total_tokens': eval_tokens['total_tokens'],
-        'openai_cost': openai_cost
+        # 'eval_prompt_tokens': eval_tokens['prompt_tokens'],
+        # 'eval_completion_tokens': eval_tokens['completion_tokens'],
+        # 'eval_total_tokens': eval_tokens['total_tokens'],
+        # 'openai_cost': openai_cost
     }

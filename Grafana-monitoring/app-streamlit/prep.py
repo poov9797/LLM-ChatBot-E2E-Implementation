@@ -19,8 +19,8 @@ BASE_URL = "https://github.com/DataTalksClub/llm-zoomcamp/blob/main"
 
 def fetch_documents():
     print("Fetching documents...")
-    relative_url = "03-vector-search/eval/documents-with-ids.json"
-    docs_url = f"{BASE_URL}/{relative_url}?raw=1"
+    # relative_url = "03-vector-search/eval/documents-with-ids.json"
+    docs_url = "https://raw.githubusercontent.com/DataTalksClub/llm-zoomcamp/refs/heads/main/01-intro/documents.json"   # f"{BASE_URL}/{relative_url}?raw=1"
     docs_response = requests.get(docs_url)
     documents = docs_response.json()
     print(f"Fetched {len(documents)} documents")
@@ -77,10 +77,11 @@ def setup_elasticsearch():
 def index_documents(es_client, documents, model):
     print("Indexing documents...")
     for doc in tqdm(documents):
-        question = doc["question"]
-        text = doc["text"]
-        doc["question_text_vector"] = model.encode(question + " " + text).tolist()
-        es_client.index(index=INDEX_NAME, document=doc)
+        
+            question = doc["question"]
+            text = doc["text"]
+            doc["question_text_vector"] = model.encode(question + " " + text).tolist()
+            es_client.index(index=INDEX_NAME, document=doc)
     print(f"Indexed {len(documents)} documents")
 
 
@@ -94,10 +95,10 @@ def main():
     print("Starting the indexing process...")
 
     documents = fetch_documents()
-    ground_truth = fetch_ground_truth()
+    # ground_truth = fetch_ground_truth()
     model = load_model()
     es_client = setup_elasticsearch()
-    index_documents(es_client, documents, model)
+    # index_documents(es_client, documents, model)
     # you may consider to comment <end>
 
 
